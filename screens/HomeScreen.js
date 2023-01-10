@@ -5,11 +5,14 @@ import uberlogo from '../assets/uber_logo.png'
 import NavOptions from '../components/NavOptions';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import {GOOGLE_MAPS_KEY} from '@env';
+import { useDispatch } from 'react-redux';
+import { setDestnation, setOrigin } from '../slices/navSlice'
 
 
 
 
 const HomeScreen = () => {
+   const dispatch = useDispatch()
   return (
     <SafeAreaView style={tw`bg-white h-full`}>
         <View style={tw`p-5`}>
@@ -32,8 +35,11 @@ const HomeScreen = () => {
                }
             }}
             onPress={(data, details = null ) => {
-               console.log(details);
-               console.log(data);
+               dispatch(setOrigin({
+                  location: details.geometry.location,
+                  description: data.description
+               }))
+               dispatch(setDestnation(null))
             } 
          }
             fetchDetails={true}
