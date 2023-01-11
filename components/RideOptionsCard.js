@@ -6,6 +6,8 @@ import tw from 'tailwind-react-native-classnames'
 import { Icon, Image } from 'react-native-elements'
 import { useNavigation } from '@react-navigation/native'
 import { useState } from 'react'
+import { useSelector } from 'react-redux'
+import { selectTravelTimeInformation } from '../slices/navSlice'
 
 const data = [
   {
@@ -28,11 +30,14 @@ const data = [
   },
 ];
 
+const SURGE_CHARGE_RATE = 1.5;
+
 
 const RideOptionsCard = () => {
 
    const navigation = useNavigation();
    const [selected, setSelected] = useState(null);
+   const travelTimeInformation = useSelector(selectTravelTimeInformation);
   return (
     <SafeAreaView style={tw`bg-white flex-grow`}>
         <View style={tw`flex-row py-6 px-6 items-center`}>
@@ -43,7 +48,8 @@ const RideOptionsCard = () => {
                 type='font-awesome'
                 />
       </TouchableOpacity> 
-      <Text style={tw`text-center text-xl pl-28`}>Select a Ride</Text>
+      <Text style={tw`text-center text-xl pl-28`}>Select a Ride - 
+      {travelTimeInformation?.distance.text}</Text>
         </View>
         <FlatList data={data}
           keyExtractor={(item)=>item.id}
@@ -64,10 +70,20 @@ const RideOptionsCard = () => {
               />
               <View style={tw`-ml-6`}>
                 <Text style={tw`text-xl font-semibold`}>{title}</Text>
-                <Text>Travel time...</Text>
+                <Text>{travelTimeInformation?.duration.text}Travel Time</Text>
               </View>
               <Text style={tw`text-xl`}>
-                $99
+             
+              {new Intl.NumberFormat("ee-gh", {
+                currency: "GHS",
+                style: "currency",
+              }).format(
+                ((travelTimeInformation?.duration.value || 0) *
+                  SURGE_CHARGE_RATE *
+                  multiplier) /
+                  100
+              )}
+
               </Text>
             </TouchableOpacity>
           )}
